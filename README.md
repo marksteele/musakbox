@@ -215,19 +215,20 @@ Here's the cost break-down in US-EAST-1
 
 Storage:
 
-Tiered price for: 22 GB
-22 GB x 0.0230000000 USD = 0.51 USD (S3 Standard storage cost)
-10,000 PUT requests for S3 Storage x 0.000005 USD per request = 0.05 USD (S3 Standard LIST requests cost)
-8,460 GET requests in a month x 0.0000004 USD per request = 0.0034 USD (S3 Standard GET requests cost)
+* Tiered price for: 22 GB
+* 22 GB x 0.0230000000 USD = 0.51 USD (S3 Standard storage cost)
+* 10,000 PUT requests for S3 Storage x 0.000005 USD per request = 0.05 USD (S3 Standard LIST requests cost)
+* 8,460 GET requests in a month x 0.0000004 USD per request = 0.0034 USD (S3 Standard GET requests cost)
+
 S3 sub-total: 0.56$
 
 Outbound data transfer:
-288 (songs per day) * 5 Mb * 30 days = 43 Gb
-1 GB x 0 USD per GB = 0.00 USD (first 1 GB free)
-42 GB x 0.09 USD per GB = 3.69 USD
+* 288 (songs per day) * 5 Mb * 30 days = 43 Gb
+* 1 GB x 0 USD per GB = 0.00 USD (first 1 GB free)
+* 42 GB x 0.09 USD per GB = 3.69 USD
+
 Data Transfer sub-total: 3.78 USD
 
 Total: 4.34$/month 
 
 That's for 24/7 streaming. If you stream an hour a day, the cost would probably be about 0.70$/month.
-
