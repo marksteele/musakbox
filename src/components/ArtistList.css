@@ -1,0 +1,15 @@
+.artist-btn {
+  color: #FFF;
+  background-color: hsl(207, 53%, 28%);
+  background: hsl(207, 53%, 28%);
+  border: 1px solid #14B7F4;
+}
+
+.artist-list {
+  color: #FFF;
+  background-color: hsl(207, 53%, 28%);
+  background: hsl(207, 53%, 28%);
+  border: 1px solid #14B7F4;
+  overflow-y: scroll;
+  height: 200px;
+}
