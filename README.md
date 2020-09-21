@@ -215,9 +215,8 @@ Here's the cost break-down in US-EAST-1
 
 Storage:
 
-* Tiered price for: 22 GB
 * 22 GB x 0.0230000000 USD = 0.51 USD (S3 Standard storage cost)
-* 10,000 PUT requests for S3 Storage x 0.000005 USD per request = 0.05 USD (S3 Standard LIST requests cost)
+* 10,000 LIST requests per month x 0.000005 USD per request = 0.05 USD (S3 Standard LIST requests cost)
 * 8,460 GET requests in a month x 0.0000004 USD per request = 0.0034 USD (S3 Standard GET requests cost)
 
 S3 sub-total: 0.56$
