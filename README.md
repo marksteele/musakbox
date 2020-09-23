@@ -36,9 +36,9 @@ All media files and playlists are stored in S3. Using temporary credentials gran
 * Delete playlists (easy)
 * Remove items from playlists (easy)
 * Better UI (not my thang...)
-* Good sync solution (easy enough to automate with a cron-job...)
-* Native apps (medium hard, will need to look into react native)
 * Complete state management re-write (again... front-end isn't my thang...)
+* Good sync solution (easy enough to automate with a cron-job...)
+* Native apps (work in progress, have prototypes with Electron app)
 
 # S3 file organization
 
@@ -235,3 +235,18 @@ Data Transfer sub-total: 3.78 USD
 Total: 4.34$/month 
 
 That's for 24/7 streaming. If you stream an hour a day, the cost would probably be about 0.70$/month.
+
+
+-----
+
+Notes:
+
+Sending stuff to serviceworkers (and back!): https://googlechrome.github.io/samples/service-worker/post-message/
+https://developers.google.com/web/tools/workbox/guides/advanced-recipes
+
+Build MacOS Electron app: 
+
+```
+yarn build
+```
+

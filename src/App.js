@@ -42,6 +42,7 @@ class App extends Component {
   clearCache() {
     lscache.flush();
     if (navigator.serviceWorker !== undefined && navigator.serviceWorker.controller !== null) {
+      console.log("Sending flush event to SW");
       navigator.serviceWorker.controller.postMessage({ command: 'flush' });
     }
     this.setState({
@@ -101,9 +102,11 @@ class App extends Component {
   }
 
   cacheSongList() {
-    console.log("Starting prefetch of songs in playlist");
-    console.log(this.state.songs);
-    this.state.songs.forEach(song => navigator.serviceWorker.controller.postMessage({ command: 'add', url: song.url }));
+    if (navigator.serviceWorker !== undefined && navigator.serviceWorker.controller !== null) {
+      console.log("Starting prefetch of songs in playlist");
+      console.log(this.state.songs);
+      this.state.songs.forEach(song => navigator.serviceWorker.controller.postMessage({ command: 'add', url: song.url }));  
+    }
   }
 
   render() {
@@ -126,7 +129,7 @@ class App extends Component {
             this.setState({songs: array});
           }}>Shuffle</button>
           <button className="menu-item" onClick={this.clearCache}>Flush cache</button>
-          <button className="menu-item" onClick={this.cache}>Cache current song list</button>
+          <button className="menu-item" onClick={this.cacheSongList}>Cache current song list</button>
         </div>
         {
           this.state.songs && this.state.songs.length && this.state.songs[this.state.currentSong] !== undefined
