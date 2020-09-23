@@ -23,7 +23,7 @@ class SongList extends Component {
                             <MenuList className="menu-item">
                                 {
                                   this.props.playlists.map(list => {
-                                    return <MenuItem className="menu-item" onItemChosen={() => {
+                                    return <MenuItem key={list} className="menu-item" onItemChosen={() => {
                                       savePlaylist(list, song.key);
                                     }} value={list}>{list}</MenuItem>
                                   })

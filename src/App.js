@@ -10,6 +10,7 @@ import SongList from './components/SongList';
 import ArtistList from './components/ArtistList';
 import Player from './components/Player';
 import PlayLists from './components/PlayLists';
+
 import lscache from 'lscache';
 
 Amplify.configure(awsconfig);
@@ -31,14 +32,18 @@ class App extends Component {
     this.handleArtistClick = this.handleArtistClick.bind(this);
     this.handlePlaylistClick = this.handlePlaylistClick.bind(this);
     this.clearCache = this.clearCache.bind(this);
+    this.cacheSongList = this.cacheSongList.bind(this);
   }
 
-  componentWillMount(){
+  componentDidMount(){
     this.refresh();
   }
 
   clearCache() {
     lscache.flush();
+    if (navigator.serviceWorker !== undefined && navigator.serviceWorker.controller !== null) {
+      navigator.serviceWorker.controller.postMessage({ command: 'flush' });
+    }
     this.setState({
       songs: [],
       artists: [],
@@ -95,6 +100,12 @@ class App extends Component {
     });
   }
 
+  cacheSongList() {
+    console.log("Starting prefetch of songs in playlist");
+    console.log(this.state.songs);
+    this.state.songs.forEach(song => navigator.serviceWorker.controller.postMessage({ command: 'add', url: song.url }));
+  }
+
   render() {
     return (
       <div className='container'>
@@ -115,6 +126,7 @@ class App extends Component {
             this.setState({songs: array});
           }}>Shuffle</button>
           <button className="menu-item" onClick={this.clearCache}>Flush cache</button>
+          <button className="menu-item" onClick={this.cache}>Cache current song list</button>
         </div>
         {
           this.state.songs && this.state.songs.length && this.state.songs[this.state.currentSong] !== undefined
@@ -139,4 +151,4 @@ class App extends Component {
   }
 }
 
-export default withAuthenticator(App)
+export default withAuthenticator(App, {includeGreetings:true})

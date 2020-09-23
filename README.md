@@ -25,6 +25,11 @@ Authentication is handled via Cognito.
 
 All media files and playlists are stored in S3. Using temporary credentials granted by the Cognito authentication, the browser can access the stored files in S3 directly.
 
+# Features
+
+* Playlists
+* Client-side caching (offline works!)
+
 # TODO
 
 * Media uploads (easy-ish, have done this before)
@@ -33,7 +38,6 @@ All media files and playlists are stored in S3. Using temporary credentials gran
 * Better UI (not my thang...)
 * Good sync solution (easy enough to automate with a cron-job...)
 * Native apps (medium hard, will need to look into react native)
-* More/better client side caching (see next item)
 * Complete state management re-write (again... front-end isn't my thang...)
 
 # S3 file organization

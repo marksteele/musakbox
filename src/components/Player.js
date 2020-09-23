@@ -134,7 +134,7 @@ class Player extends Component {
             onChange={this.handleSlider}
           />
           <div className="time" ref='duration'>{convertSecondsToMinsSecs(this.state.duration)}</div>
-          <div className="song-title">{this.state.currentSongTitle}</div>
+          <div className="song-title">{this.state.currentSongTitle.slice(0, -4)}</div>
         </div>
       </div>
     );
