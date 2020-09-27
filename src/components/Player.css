@@ -41,6 +41,11 @@
   margin-top: 1rem;
 }
 
+.shuffle {
+  float: left;
+  margin-top: 1rem;
+}
+
 .slider {
   -webkit-appearance: none;
   max-width: 500;
