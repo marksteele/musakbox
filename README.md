@@ -35,15 +35,20 @@ MusakBox uses several mechanisms to support offline play:
 * Playlists
 * View by artist
 * Song/Artist search
-* Client-side caching (offline works!)
+* Offline operation via client-side caching
+* Regular stuff: repeat, shuffle, seek, mute
 
 # TODO
 
 * Media uploads (easy-ish, have done this before)
 * Delete playlists (easy)
 * Good sync solution (easy enough to automate with a cron-job...)
-* Native apps (work in progress, have prototypes with Electron app)
-* Handle offline mode (prevent metadata operations, prevent cache clearing, prevent pre-caching)
+* Native apps ..work in progress, have prototypes with Electron ap (medium))
+* Handle offline mode... when song missing skip to next cached song, prevent metadata operations, prevent cache clearing, prevent pre-caching (easy)
+* Media keys (should be do-able)
+* When pre-caching a bunch of songs, the SW appears to get stuck sometimes. Should re-factor to open a bi-directional channel with the front-end and limit concurrent requests, with timeouts and retries.
+* Better detection/handling of failed requests. Ex: detect logged in state when requests fail with 400 errors and refresh token (if token refreshable).
+
 
 # S3 file organization
 
@@ -239,7 +244,7 @@ Data Transfer sub-total: 3.78 USD
 
 Total: 4.34$/month 
 
-That's for 24/7 streaming. If you stream an hour a day, the cost would probably be about 0.70$/month.
+That's for 24/7 streaming. If you stream an hour a day, the cost would probably be about 0.70$/month. Also caching will significantly reduce the costs.
 
 
 -----

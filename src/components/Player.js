@@ -10,6 +10,7 @@ const Player = () => {
   const [{currentSong}] = useContext(GlobalContext);
   const [isMuted, setIsMuted] = useState(0);
   const [isLooping, setIsLooping] = useState(0);
+  const [isShuffle, setIsShuffle] = useState(0);
   const [isPlaying, setIsPlaying] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -65,9 +66,13 @@ const Player = () => {
 
   const playNext = () => {
     if (nowPlaying.length > 0) {
-      const idx = nowPlaying.findIndex(x => x.key === currentSong.key) || 0;
-      if (idx+1 !== nowPlaying.length) {
-        dispatch({type: "setCurrentSong", song: nowPlaying[((idx+1) < nowPlaying.length+1) ? idx+1 : 0]});
+      if (!isShuffle) {
+        const idx = nowPlaying.findIndex(x => x.key === currentSong.key) || 0;
+        if (idx+1 !== nowPlaying.length) {
+          dispatch({type: "setCurrentSong", song: nowPlaying[((idx+1) < nowPlaying.length+1) ? idx+1 : 0]});
+        }
+      } else {
+        dispatch({type: "setCurrentSong", song: nowPlaying[Math.floor(Math.random()*nowPlaying.length)]});
       }
     }
   };
@@ -98,6 +103,7 @@ const Player = () => {
         </div>
         <div className="icons-container">
           <i className={isLooping ? "material-icons repeat glow" : "material-icons repeat"} onClick={() => setIsLooping(!isLooping)}>repeat_one</i>
+          <i className={isShuffle ? "material-icons shuffle glow" : "material-icons shuffle"} onClick={() => setIsShuffle(!isShuffle)}>shuffle</i>
           <i className="material-icons" onClick={() => playPrev()}>skip_previous</i>
           <i className="material-icons play" onClick={() => {isPlaying ? playerRef.current.pause() : playerRef.current.play() }}>{isPlaying ? "pause_circle_outline" : "play_circle_outline"}</i>
           <i className="material-icons" onClick={() => playNext()}>skip_next</i>
