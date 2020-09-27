@@ -25,20 +25,25 @@ Authentication is handled via Cognito.
 
 All media files and playlists are stored in S3. Using temporary credentials granted by the Cognito authentication, the browser can access the stored files in S3 directly.
 
+MusakBox uses several mechanisms to support offline play:
+* Localstorage cache metadata (song list, list of saved playlists, playlist content)
+* Service worker is setup to intercept all transient S3 requests for media and remap them to a consistent cache
+* App can pre-cache items by communicating with service worker and requesting caching of items in playlist
+
 # Features
 
 * Playlists
+* View by artist
+* Song/Artist search
 * Client-side caching (offline works!)
 
 # TODO
 
 * Media uploads (easy-ish, have done this before)
 * Delete playlists (easy)
-* Remove items from playlists (easy)
-* Better UI (not my thang...)
-* Complete state management re-write (again... front-end isn't my thang...)
 * Good sync solution (easy enough to automate with a cron-job...)
 * Native apps (work in progress, have prototypes with Electron app)
+* Handle offline mode (prevent metadata operations, prevent cache clearing, prevent pre-caching)
 
 # S3 file organization
 

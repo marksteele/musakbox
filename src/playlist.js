@@ -1,6 +1,6 @@
 import { Storage } from 'aws-amplify';
 import lscache from 'lscache';
-import { parseInfo, fetchSongUrl }  from './songs.js';
+import { parseInfo }  from './songs.js';
 
 // Assumption: Will not have more than 1000 playlists. Limitation of amplify ¯\_(ツ)_/¯
 // We could work around this by using some partitioning (eg: aplphabet prefixing)
@@ -20,22 +20,19 @@ export function fetchPlaylists() {
 }
 
 export function loadPlaylist(key) {
-  let results = lscache.get(`playlists/${key}`);
+  const results = lscache.get(`playlists/${key}`);
   if (results === null) {
+    console.log("Loading playlist data from S3...");
     return loadFile(`playlists/${key}`)
-      .then(data => Promise.resolve(data.trim().split("\n")))
-      .then(songList => {
-        return Promise.all(songList.filter(Boolean).map(async (item) => { 
-          const url = await fetchSongUrl(item);
-          const info = parseInfo(item);
-          return { artist: info.artist, title: info.title, url: url, key: item } 
-        }))
-        .then(results => {
-          results = results.filter(item => item.artist !== "unknown");
-          lscache.set(`playlists/${key}`, results, 86400);
-        });
+      .then(data => Promise.resolve(data.trim().split("\n").filter(Boolean).map(i => parseInfo(i))))
+      .then(res => {
+        console.log("S3 results: ");
+        console.log(res);
+        lscache.set(`playlists/${key}`, res, 86400);
+        return res;
       });
   } else {
+    console.log("loaded from cache");
     return Promise.resolve(results);
   }
 }
@@ -51,7 +48,21 @@ export function loadFile(key) {
     });
 }
 
-export function savePlaylist(playlist, song) {
+export function savePlaylist(playlist, songs) {
+  let data = songs.map(e => e.key).join("\n");
+  return Storage.put(`playlists/${playlist}`, data, { level: 'private' })
+  .then(() => {
+    lscache.set(`playlists/${playlist}`, songs, 86400);
+    return Promise.resolve();
+  });
+}
+
+
+export function removeFromPlaylist(playlist, song) {
   loadFile(`playlists/${playlist}`)
-  .then(data => Storage.put(`playlists/${playlist}`, data + song + "\n", { level: 'private' }));
+  .then(data => Storage.put(`playlists/${playlist}`, data.replace(song + "\n",""), { level: 'private' }));
+  const results = lscache.get(`playlists/${playlist}`);
+  if (results && Array.isArray(results)) {
+    lscache.set(`playlists/${playlist}`, results.filter(s => s !== song), 86400);  
+  }
 }

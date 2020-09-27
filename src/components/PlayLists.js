@@ -1,49 +1,45 @@
-import React, { Component } from 'react'
-import {MenuList, MenuItem, MenuButton } from 'react-menu-list';
-import './PlayLists.css';
-import { savePlaylist } from '../playlist.js'
+import React, { useContext } from "react";
+import { GlobalContext } from "./GlobalState";
+import { loadPlaylist }  from '../playlist.js';
 
-class PlayLists extends Component {
+import {
+  ListItem,
+  Divider,
+  ListItemText
+} from "@material-ui/core";
 
-  constructor(props) {
-    super(props);
-    this.state = {value: ''};
-    this.handleChange = this.handleChange.bind(this);
-  }
+const PlayLists = () => {
 
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
+  const [{ playlists, activeView }, dispatch] = useContext(GlobalContext);
 
-  render() {
+  const setNowPlaying = data => {
+    if (data.length) {
+      dispatch({ type: "setNowPlaying", nowPlaying: data });
+      dispatch({ type: "setActiveView", activeView: 'nowPlaying'});
+      dispatch({ type: "setCurrentSong", song: data[0]});  
+    }
+  };
+
+  const handleClick = playlist => {
+    loadPlaylist(playlist)
+      .then(songs => {
+        setNowPlaying(songs);
+      });
+  };
+
+  const renderResult = playlists.map(playlist => {
     return (
       <>
-        <MenuButton className="playlist-btn"
-          menu={
-            <div className="playlist-list">
-              <MenuList className="menu-item">
-                  {
-                    this.props.playlists.map((list, i) => {
-                      return <MenuItem key={i} className="playlist-btn" onItemChosen={() => {
-                        this.props.handlePlaylistClick(i)
-                      }} value={i}>{list}</MenuItem>
-                    })
-                  }
-                  <hr />
-                  <div className="playlist-btn">New playlist: <input value={this.state.value} onChange={this.handleChange} type="text" />
-                  <button className="playlist-btn" onClick={() => {
-                    savePlaylist(this.state.value, '');
-                    this.setState({value: ''});
-                  }}>Save</button></div>
-              </MenuList>
-            </div>
-          }
-        >Playlists
-        </MenuButton>
-        
+        <ListItem key={playlist} alignItems="flex-start" button onClick={() => handleClick(playlist)}>
+          <ListItemText primary={playlist} />
+        </ListItem>
+        <Divider />
       </>
     );
-  }
-}
+  });
+
+  return activeView === "playlists" ? renderResult : null;
+
+};
 
 export default PlayLists;

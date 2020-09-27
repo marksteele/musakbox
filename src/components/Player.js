@@ -1,149 +1,122 @@
-import React, { Component } from 'react';
-
+import React, { useContext, useState, useEffect, useRef } from "react";
+import { fetchSongUrl }  from '../songs.js';
+import { GlobalContext } from "./GlobalState";
 import './Player.css'
 
-class Player extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentSongUrl: "",
-      currentSongTitle: "",
-      isPlaying: false,
-      isMute: false,
-      currentTime: 0,
-      duration: 0,
-      isLooping: false
+const Player = () => {
+
+  const [{ nowPlaying }, dispatch] = useContext(GlobalContext);
+  const [{currentSong}] = useContext(GlobalContext);
+  const [isMuted, setIsMuted] = useState(0);
+  const [isLooping, setIsLooping] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [currentSongUrl, setCurrentSongUrl] = useState("");
+  const playerRef = useRef();
+
+  useEffect(() => {
+    playerRef.current.muted = isMuted;
+  }, [isMuted]);
+
+  useEffect(() => {
+    let interval = null;
+    if (isPlaying) {
+      if (interval) {
+        clearInterval(interval);
+      }
+    } else {
+      interval = setInterval(() => {
+        setCurrentTime(playerRef.current.currentTime);
+      },1000)
     }
-    this.handlePlay = this.handlePlay.bind(this);
-    this.handleVolume = this.handleVolume.bind(this);
-    this.handleSlider = this.handleSlider.bind(this);
-    this.handleLooping = this.handleLooping.bind(this);
-  }
+  }, [isPlaying]);
 
-  handlePlay() {
-    this.state.isPlaying ? this.refs.player.pause() : this.refs.player.play();
-    this.setState({isPlaying: !this.state.isPlaying});
-  }
-
-  handleVolume() {
-    this.setState({isMute: !this.state.isMute})
-  }
-
-  handleTime() {
-    const audio = this.refs.player;
-    let timer;
-    if(timer){window.cancelRequestAnimFrame(timer)};
-    if(audio) {
-      timer = window.requestAnimationFrame(() => {
-        this.setState({
-          currentTime: audio.currentTime,
-          duration: audio.duration
-        });
-        if(Math.floor(audio.currentTime) === Math.floor(audio.duration)) {
-          if(this.state.isLooping) {
-            this.refs.player.currentTime = 0;
-            this.refs.player.play();
-          } else {
-            this.props.playNext();
-          }
-        }
+  useEffect(() => {
+    if (currentSong.key !== undefined) {
+      fetchSongUrl(currentSong.key)
+      .then(url => {
+        setCurrentSongUrl(url);
       });
     }
+    setIsPlaying(true);
+  }, [currentSong]);
+
+  const songEnded = () => {
+    if (!isLooping) {
+      playNext();
+    } else {
+      playerRef.current.currentTime = 0;
+      playerRef.current.play();
+    }
   }
 
-  handleSlider(event) {
-    this.refs.player.currentTime = event.target.value;
-    this.setState({currentTime: event.target.value});
+  const canPlay = () => {
+    setDuration(playerRef.current.duration);
   }
 
-  handleLooping() {
-    this.setState({isLooping: !this.state.isLooping});
+  const playPrev = () => {
+    if (nowPlaying.length > 0) {
+      const idx = nowPlaying.findIndex(x => x.key === currentSong.key) || 0;
+      dispatch({type: "setCurrentSong", song: nowPlaying[idx>0 ? idx-1 : nowPlaying.length-1]});  
+    }
+  };
+
+  const playNext = () => {
+    if (nowPlaying.length > 0) {
+      const idx = nowPlaying.findIndex(x => x.key === currentSong.key) || 0;
+      if (idx+1 !== nowPlaying.length) {
+        dispatch({type: "setCurrentSong", song: nowPlaying[((idx+1) < nowPlaying.length+1) ? idx+1 : 0]});
+      }
+    }
+  };
+
+  const onSeek= (value) => {
+    setCurrentTime(value);
+    playerRef.current.currentTime = value;
   }
 
-  componentWillMount() {
-    this.setState({
-      currentSongUrl: this.props.currentSongUrl,
-      currentSongTitle: this.props.currentSongTitle
-    });
+  const onPlay = () => {
+    setIsPlaying(true);
   }
 
-  componentDidMount() {
-    this.handleTime();
+  const onPause = () => {
+    setIsPlaying(false);
   }
+  
+  return (
+      <>
 
-  componentDidUpdate() {
-    this.handleTime();
-  }
 
-  componentWillReceiveProps(nextProps) {
-    // console.log("receiving ", nextProps.currentSongUrl);
-    this.setState({
-      currentSongUrl: nextProps.currentSongUrl,
-      currentSongTitle: nextProps.currentSongTitle,
-      isPlaying: true
-    });
-  }
-
-  render() {
-    return (
       <div className="player-controls">
-
+      <div>
+          <div className="time">{convertSecondsToMinsSecs(currentTime)}</div>
+          <input className='slider' type="range" min="0" step="1" max={duration} value={currentTime} onChange={(e) => onSeek(e.target.value)}/>
+          <div className="time">{convertSecondsToMinsSecs(duration)}</div>
+          <div className="song-title">{currentSong.title}</div>
+        </div>
         <div className="icons-container">
-
-          <i
-            className={this.state.isLooping ? "material-icons repeat glow" : "material-icons repeat"}
-            onClick={this.handleLooping}>repeat_one
-          </i>
-
-          <i className="material-icons" onClick={this.props.playPrev}>skip_previous</i>
-
-          <i
-            className="material-icons play"
-            ref="play"
-            onClick={this.handlePlay}>
-            {this.state.isPlaying ? "pause_circle_outline" : "play_circle_outline"}
-          </i>
-
-          <i className="material-icons" onClick={this.props.playNext}>skip_next</i>
-
-          <i
-            className="material-icons volume"
-            ref="volume"
-            onClick={this.handleVolume}>
-            {this.state.isMute ? "volume_off" : "volume_up"}
-          </i>
+          <i className={isLooping ? "material-icons repeat glow" : "material-icons repeat"} onClick={() => setIsLooping(!isLooping)}>repeat_one</i>
+          <i className="material-icons" onClick={() => playPrev()}>skip_previous</i>
+          <i className="material-icons play" onClick={() => {isPlaying ? playerRef.current.pause() : playerRef.current.play() }}>{isPlaying ? "pause_circle_outline" : "play_circle_outline"}</i>
+          <i className="material-icons" onClick={() => playNext()}>skip_next</i>
+          <i className="material-icons volume" onClick={() => setIsMuted(!isMuted)}>{isMuted ? "volume_off" : "volume_up"}</i>
         </div>
-
-        <audio
-          src={this.state.currentSongUrl}
-          ref="player"
-          muted={this.state.isMute}
-          autoPlay={this.state.isPlaying}>Your browser does not support the <code>audio</code> element.
-        </audio>
-
-        <div>
-          <div className="time" ref='currentTime'>{convertSecondsToMinsSecs(this.state.currentTime)}</div>
-          <input
-            className='slider'
-            type="range"
-            min="0"
-            step="1"
-            max={this.state.duration}
-            value={this.state.currentTime}
-            onChange={this.handleSlider}
-          />
-          <div className="time" ref='duration'>{convertSecondsToMinsSecs(this.state.duration)}</div>
-          <div className="song-title">{this.state.currentSongTitle.slice(0, -4)}</div>
-        </div>
+        <audio src={currentSongUrl} ref={playerRef} muted={isMuted} onPause={() => onPause()} onPlay={() => onPlay()} onCanPlay={() => canPlay()} onEnded={() => songEnded()} autoPlay={isPlaying}>Your browser does not support the <code>audio</code> element.</audio>
       </div>
+
+      </>
     );
   }
-}
+
 
 export default Player;
 
 function convertSecondsToMinsSecs(totalSec) {
+  if (!totalSec) {
+    return '00:00';
+  }
   const minutes = parseInt( totalSec / 60, 10) % 60;
   const seconds = parseInt(totalSec % 60, 10);
   const result = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds  < 10 ? "0" + seconds : seconds);

@@ -1,31 +1,43 @@
-import React, { Component } from 'react'
-import {MenuList, MenuItem, MenuButton } from 'react-menu-list';
-import './ArtistList.css';
+import React, { useContext, useCallback } from "react";
+import { GlobalContext } from "./GlobalState";
+import { ListItem, Divider, ListItemText} from "@material-ui/core";
 
-class ArtistList extends Component {
+const ArtistList = () => {
 
-  render() {
+  const [{ songList, artists, activeView }, dispatch] = useContext(GlobalContext);
+  
+  const setSearchResults = useCallback(
+    data => {
+      dispatch({ type: "setSearchResults", songs: data });
+    },
+    [dispatch]
+  );
+
+  const setActiveView = React.useCallback(
+    (data) => {
+      dispatch({ type: "setActiveView", activeView: data });
+    },
+    [dispatch]
+  );
+
+  const handleClick = artist => {
+    setSearchResults(songList.filter(s => s.artist === artist));
+    setActiveView("search");
+  };
+
+  const renderResult = artists.map(artist => {
     return (
       <>
-        <MenuButton className="artist-btn"
-          menu={
-            <div className="artist-list">
-              <MenuList className="artist-btn">
-                  {
-                   this.props.artists.map((artist, i) => {
-                      return <MenuItem key={i} className="artist-btn" onItemChosen={() => {
-                        this.props.handleArtistClick(i)
-                      }} value={i}>{artist}</MenuItem>
-                    })
-                  }
-              </MenuList>
-            </div>
-          }
-        >Artists
-        </MenuButton>
+        <ListItem key={artist} alignItems="flex-start" button onClick={() => handleClick(artist)}>
+          <ListItemText primary={artist} />
+        </ListItem>
+        <Divider />
       </>
     );
-  }
-}
+  });
+
+  return activeView === "artists" ? renderResult : null;
+
+};
 
 export default ArtistList;

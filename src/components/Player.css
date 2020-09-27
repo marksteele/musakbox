@@ -9,7 +9,7 @@
 }
 
 .icons-container {
-  width: 500px;
+  max-width: 500px;
   height: 4rem;
   margin: 0 auto;
 }
@@ -43,7 +43,7 @@
 
 .slider {
   -webkit-appearance: none;
-  width: 500px;
+  max-width: 500;
   height: 2px;
   outline: none;
   cursor: pointer;
