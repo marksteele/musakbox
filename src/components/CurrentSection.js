@@ -47,9 +47,7 @@ const CurrentSection = () => {
   );
 
   useEffect(() => {
-    console.log("Refreshing: " + refreshing);
     if (refreshing) {
-      console.log("Loading playlists and songs from s3");
       fetchPlaylists().then(playlists => {
         setPlaylists(playlists);
       });

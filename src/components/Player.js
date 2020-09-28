@@ -40,8 +40,8 @@ const Player = () => {
       .then(url => {
         setCurrentSongUrl(url);
       });
+      setIsPlaying(true);
     }
-    setIsPlaying(true);
   }, [currentSong]);
 
   const songEnded = () => {
@@ -84,16 +84,40 @@ const Player = () => {
 
   const onPlay = () => {
     setIsPlaying(true);
+    setupMediaSessions();
   }
 
   const onPause = () => {
     setIsPlaying(false);
   }
+
+  const setupMediaSessions = () => {
+    if ("mediaSession" in navigator) {
+      console.log("navigator setupped");
+      navigator.mediaSession.metadata = new window.MediaMetadata({
+        title: currentSong.title,
+        artist: currentSong.artist
+      });
+      navigator.mediaSession.setActionHandler("play", () => {
+        console.log("IN PLAY");
+        playerRef.current.play();
+      });
+      navigator.mediaSession.setActionHandler("pause", () => {
+        console.log("IN PAUSE");
+        playerRef.current.pause();
+      });
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        playPrev();
+      });
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        playNext();
+      });
+    }
+  };
+  
   
   return (
       <>
-
-
       <div className="player-controls">
       <div>
           <div className="time">{convertSecondsToMinsSecs(currentTime)}</div>

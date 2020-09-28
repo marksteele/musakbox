@@ -4,6 +4,7 @@ export const GlobalContext = React.createContext();
 
 const initialState = {
   savePlaylist: '',
+  isMenuOpen: false,
   activeView: '',
   refreshing: true,
   songList: [], // The "everything" list. [{key: 'songs/s3/path.mp3', title: 'choo choo', artist: 'foo man chew'}]
@@ -21,6 +22,11 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "setIsMenuOpen":
+      return {
+        ...state,
+        isMenuOpen: action.isMenuOpen
+      }
     case "setSavePlaylist":
       return {
         ...state,
