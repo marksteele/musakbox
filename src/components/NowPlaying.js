@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { GlobalContext } from "./GlobalState";
-import { RemoveFromQueue } from "@material-ui/icons/";
+import { Remove } from "@material-ui/icons/";
 import { IconButton } from "@material-ui/core/";
-import { List,ListItem, Typography, Divider, ListItemText} from "@material-ui/core";
+import { List, ListItem, Typography, Divider, ListItemText} from "@material-ui/core";
 
 const NowPlaying = () => {
 
@@ -27,7 +27,7 @@ const NowPlaying = () => {
       <List>
         <ListItem key={song.key} alignItems="flex-start">
           <ListItemText onClick={() => handleClick(song)} primary={song.title} secondary={<><Typography component="span" variant="body2" color="textPrimary">{song.artist}</Typography></>}/>
-          <IconButton color="inherit" aria-label="Remove from Queue" onClick={() => removeFromNowPlaying(song.key)} ><RemoveFromQueue /></IconButton>
+          <IconButton color="inherit" aria-label="Remove from Queue" onClick={() => removeFromNowPlaying(song.key)} ><Remove /></IconButton>
         </ListItem>
         <Divider />
       </List>

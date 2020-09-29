@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { SwipeableDrawer, Divider, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
-import { Refresh, DeleteSweep, ExitToApp, Settings} from "@material-ui/icons";
+import { Refresh, DeleteSweep, ExitToApp, Settings, ClearAll } from "@material-ui/icons";
 import { GlobalContext } from "./GlobalState";
 import "./darkMode.css";
 import lscache from 'lscache';
@@ -54,6 +54,11 @@ const SwipeMenu = () => {
     });
   }
 
+  const clearNowPlaying = () => {
+    dispatch({ type: 'setNowPlaying', nowPlaying: []});
+    dispatch({ type: "setIsMenuOpen", isMenuOpen: false});
+  }
+
   return (
     <SwipeableDrawer open={isMenuOpen} onClose={() => setIsMenuOpen(false)} onOpen={() => setIsMenuOpen(true)}>
       <div style={{ width: "300px" }}>
@@ -64,16 +69,20 @@ const SwipeMenu = () => {
           </ListItem>
           <Divider />
           <ListItem button onClick={() => refreshMetadata()}>
-          <ListItemIcon color="inherit" aria-label="Refresh"><Refresh /></ListItemIcon>
-          <ListItemText primary="Delete metadata cache" />
+            <ListItemIcon color="inherit" aria-label="Refresh"><Refresh /></ListItemIcon>
+            <ListItemText primary="Delete metadata cache" />
           </ListItem>
           <ListItem button onClick={() => refresh()}>
-          <ListItemIcon color="inherit" aria-label="Delete all caches"><DeleteSweep /></ListItemIcon>
-          <ListItemText primary="Delete all caches" />
+            <ListItemIcon color="inherit" aria-label="Delete all caches"><DeleteSweep /></ListItemIcon>
+            <ListItemText primary="Delete all caches" />
+          </ListItem>
+          <ListItem button onClick={() => clearNowPlaying()}>
+            <ListItemIcon color="inherit" aria-label="Delete all caches"><ClearAll /></ListItemIcon>
+            <ListItemText primary="Clear now playing" />
           </ListItem>
           <ListItem button onClick={() => logout()}>
-          <ListItemIcon color="inherit" aria-label="Logout"><ExitToApp /></ListItemIcon>
-          <ListItemText primary="Logout" />
+            <ListItemIcon color="inherit" aria-label="Logout"><ExitToApp /></ListItemIcon>
+            <ListItemText primary="Logout" />
           </ListItem>
         </List>
       </div>

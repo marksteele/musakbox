@@ -43,7 +43,6 @@ MusakBox uses several mechanisms to support offline play:
 # TODO
 
 * Media uploads (easy-ish, have done this before)
-* Delete playlists (easy)
 * Good sync solution (easy enough to automate with a cron-job...)
 * Native apps ..work in progress, have prototypes with Electron ap (medium))
 * Handle offline mode... when song missing skip to next cached song, prevent metadata operations, prevent cache clearing, prevent pre-caching (easy)

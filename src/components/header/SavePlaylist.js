@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { InputBase, IconButton} from "@material-ui/core";
+import React, { useContext, useCallback } from "react";
+import { InputBase, IconButton } from "@material-ui/core";
 import { ArrowBack, Save } from "@material-ui/icons";
 import { GlobalContext } from "../GlobalState";
 import {savePlaylist as save} from '../../playlist';
@@ -8,14 +8,14 @@ const SavePlaylist = ({ history, location }) => {
 
   const [{ nowPlaying, activeView, savePlaylist }, dispatch] = useContext(GlobalContext);
   
-  const setActiveView = React.useCallback(
+  const setActiveView = useCallback(
     (data) => {
       dispatch({ type: "setActiveView", activeView: data });
     },
     [dispatch]
   );
 
-  const setSavePlaylist = React.useCallback(
+  const setSavePlaylist = useCallback(
     (data) => {
       dispatch({ type: "setSavePlaylist", savePlaylist: data });
     },
@@ -30,6 +30,13 @@ const SavePlaylist = ({ history, location }) => {
   const onExit = () => { 
     setActiveView("nowPlaying");
   };
+  
+  const setRefreshing = useCallback(
+    data => {
+      dispatch({ type: "setRefreshing", refreshing: data });
+    },
+    [dispatch]
+  );
 
   const onSave = () => {
     if (!savePlaylist) {
@@ -37,7 +44,10 @@ const SavePlaylist = ({ history, location }) => {
       return;
     }
     console.log("Saving playlist...");
-    save(savePlaylist, nowPlaying).then(setActiveView("nowPlaying"));
+    save(savePlaylist, nowPlaying).then(() => {
+      setActiveView("nowPlaying");
+      setRefreshing(true);
+    });
   }
 
   const renderResult = (

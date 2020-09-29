@@ -59,9 +59,9 @@ function SimpleAppBar(props) {
         return (
           <>
             <IconButton  onClick={() => setActiveView("search")} color="inherit" aria-label="Search"><Search /></IconButton>
-            <IconButton  onClick={() => setActiveView("savePlaylist")} color="inherit" aria-label="Save"><Save /></IconButton>
-            <IconButton color="inherit" onClick={() => setActiveView("playlists")}  aria-label="Playlists"><PlaylistPlay /></IconButton>
             <IconButton color="inherit" onClick={() => setActiveView("artists")}  aria-label="Artists"><Brush /></IconButton>
+            <IconButton color="inherit" onClick={() => setActiveView("playlists")}  aria-label="Playlists"><PlaylistPlay /></IconButton>
+            <IconButton  onClick={() => setActiveView("savePlaylist")} color="inherit" aria-label="Save"><Save /></IconButton>
             <IconButton color="inherit" onClick={() => cacheNowPlaying()}  aria-label="Cache"><OfflineBolt /></IconButton>
             <IconButton color="inherit" onClick={() => setIsMenuOpen(true)} aria-label="Settings"><Settings /></IconButton>
           </>

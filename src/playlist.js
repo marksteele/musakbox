@@ -26,14 +26,13 @@ export function loadPlaylist(key) {
     return loadFile(`playlists/${key}`)
       .then(data => Promise.resolve(data.trim().split("\n").filter(Boolean).map(i => parseInfo(i))))
       .then(res => {
-        console.log("S3 results: ");
         console.log(res);
         lscache.set(`playlists/${key}`, res, 86400);
         return res;
       });
   } else {
     console.log("loaded from cache");
-    return Promise.resolve(results);
+    return Promise.resolve(results ? results : []);
   }
 }
 
@@ -53,16 +52,22 @@ export function savePlaylist(playlist, songs) {
   return Storage.put(`playlists/${playlist}`, data, { level: 'private' })
   .then(() => {
     lscache.set(`playlists/${playlist}`, songs, 86400);
+    const currentLists = lscache.get('playlists');
+    if (currentLists.indexOf(playlist) === -1) {
+      lscache.set('playlists', [ ...currentLists, playlist ]);
+    }
     return Promise.resolve();
   });
 }
 
 
-export function removeFromPlaylist(playlist, song) {
-  loadFile(`playlists/${playlist}`)
-  .then(data => Storage.put(`playlists/${playlist}`, data.replace(song + "\n",""), { level: 'private' }));
-  const results = lscache.get(`playlists/${playlist}`);
-  if (results && Array.isArray(results)) {
-    lscache.set(`playlists/${playlist}`, results.filter(s => s !== song), 86400);  
-  }
+export function removePlaylist(playlist) {
+  Storage.remove(`playlists/${playlist}`, { level: 'private'})
+  .then(() => {
+    lscache.remove(playlist);
+    const results = lscache.get(`playlists`);
+    if (results.length) {
+      lscache.set('playlists', results.filter(x => x !== playlist), 86400);
+    }
+  })
 }

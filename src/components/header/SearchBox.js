@@ -1,5 +1,4 @@
 import React, { useContext, useState, useCallback } from "react";
-import { withRouter } from "react-router-dom";
 import { InputBase, IconButton} from "@material-ui/core";
 import { ArrowBack } from "@material-ui/icons";
 import { GlobalContext } from "../GlobalState";
@@ -68,4 +67,4 @@ const SearchBox = ({ history, location }) => {
   );
 };
 
-export default withRouter(SearchBox);
+export default SearchBox;

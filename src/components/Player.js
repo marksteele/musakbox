@@ -29,7 +29,7 @@ const Player = () => {
       }
     } else {
       interval = setInterval(() => {
-        setCurrentTime(playerRef.current.currentTime);
+        setCurrentTime(playerRef.current ? playerRef.current.currentTime : 0);
       },1000)
     }
   }, [isPlaying]);
