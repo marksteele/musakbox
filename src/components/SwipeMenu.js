@@ -7,7 +7,7 @@ import lscache from 'lscache';
 import { Auth } from 'aws-amplify';
 
 const SwipeMenu = () => {
-  const [{ isMenuOpen }, dispatch] = useContext(GlobalContext);
+  const [{ isMenuOpen, isOnline }, dispatch] = useContext(GlobalContext);
 
   const setIsMenuOpen = data => {
     dispatch({ type: "setIsMenuOpen", isMenuOpen: data });
@@ -68,11 +68,11 @@ const SwipeMenu = () => {
             <ListItemText primary="Settings" />
           </ListItem>
           <Divider />
-          <ListItem button onClick={() => refreshMetadata()}>
+          <ListItem button disabled={!isOnline} onClick={() => refreshMetadata()}>
             <ListItemIcon color="inherit" aria-label="Refresh"><Refresh /></ListItemIcon>
             <ListItemText primary="Delete metadata cache" />
-          </ListItem>
-          <ListItem button onClick={() => refresh()}>
+          </ListItem>        
+          <ListItem button disabled={!isOnline} onClick={() => refresh()}>
             <ListItemIcon color="inherit" aria-label="Delete all caches"><DeleteSweep /></ListItemIcon>
             <ListItemText primary="Delete all caches" />
           </ListItem>

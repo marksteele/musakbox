@@ -26,7 +26,6 @@ export function loadPlaylist(key) {
     return loadFile(`playlists/${key}`)
       .then(data => Promise.resolve(data.trim().split("\n").filter(Boolean).map(i => parseInfo(i))))
       .then(res => {
-        console.log(res);
         lscache.set(`playlists/${key}`, res, 86400);
         return res;
       });

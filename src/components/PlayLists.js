@@ -4,7 +4,6 @@ import { loadPlaylist, removePlaylist }  from '../playlist.js';
 import { ListItem, Divider, ListItemText, IconButton } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 
-
 const PlayLists = () => {
 
   const [{ playlists, activeView }, dispatch] = useContext(GlobalContext);

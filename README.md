@@ -26,7 +26,8 @@ Authentication is handled via Cognito.
 All media files and playlists are stored in S3. Using temporary credentials granted by the Cognito authentication, the browser can access the stored files in S3 directly.
 
 MusakBox uses several mechanisms to support offline play:
-* Localstorage cache metadata (song list, list of saved playlists, playlist content)
+
+* Localstorage caches metadata (song list, list of saved playlists, playlist content)
 * Service worker is setup to intercept all transient S3 requests for media and remap them to a consistent cache
 * App can pre-cache items by communicating with service worker and requesting caching of items in playlist
 
@@ -39,13 +40,15 @@ MusakBox uses several mechanisms to support offline play:
 * Regular stuff: repeat, shuffle, seek, mute
 * Lock screen controls
 * Can be installed as Chrome app (Chrome Desktop & Android)
+* Cache management
 
 # TODO
 
+* Better cache management (playlists/songlist persistent keys in cache)
 * Media uploads (easy-ish, have done this before)
 * Good sync solution (easy enough to automate with a cron-job...)
-* Native apps ..work in progress, have prototypes with Electron ap (medium))
-* Handle offline mode... when song missing skip to next cached song, prevent metadata operations, prevent cache clearing, prevent pre-caching (easy)
+* Native apps ..work in progress, have prototypes with Electron ap (medium)
+* Handle offline mode... when song missing skip to next cached song
 * Media keys (should be do-able) -- Ugh. what a PITA. Can't get it to work.
 * When pre-caching a bunch of songs, the SW appears to get stuck sometimes. Should re-factor to open a bi-directional channel with the front-end and limit concurrent requests, with timeouts and retries.
 * Better detection/handling of failed requests. Ex: detect logged in state when requests fail with 400 errors and refresh token (if token refreshable).
@@ -261,3 +264,8 @@ Build MacOS Electron app:
 yarn build
 ```
 
+
+songList -> everything list
+nowPlaying -> list of indexes from songlist?
+playlists: list of playlists
+playlist contents: list of indexes from songlist (looked up through state updates)

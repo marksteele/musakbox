@@ -8,7 +8,6 @@ import SearchResult from "../components/SearchResult";
 import NowPlaying from "../components/NowPlaying";
 import Playlists from "../components/PlayLists";
 import ArtistList from "../components/ArtistList";
-
 import PlayListsSave from "../components/PlayListsSave";
 
 const CurrentSection = () => {

@@ -10,15 +10,15 @@ if (typeof importScripts === 'function') {
       console.log("Checking cache for " + matches[1]);
       const cacheResponse = await cache.match(cacheReq);
       if (cacheResponse) {
-        console.log("SW: AUTOCACHE: CACHE HIT" + matches[1]);
+        console.log("SW: AUTOCACHE: CACHE HIT: " + matches[1]);
         return cacheResponse;
       }
-      console.log("SW: AUTOCACHE: CACHE MISS" + matches[1]);
+      console.log("SW: AUTOCACHE: CACHE MISS: " + matches[1]);
       const response = await fetch(url.href);
       if (response.ok) {
         await cache.put(cacheReq, response.clone());
       } else {
-        console.log("SW: AUTOCACHE: ERROR FETCHING" + matches[1]);
+        console.log("SW: AUTOCACHE: ERROR FETCHING: " + matches[1]);
       }
       return response;
     };

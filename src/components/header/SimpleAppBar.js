@@ -5,7 +5,7 @@ import SavePlaylist from "./SavePlaylist";
 import PlayListMenu from "./PlayListMenu";
 import ArtistMenu from "./ArtistMenu";
 import { fetchSongUrl }  from '../../songs.js';
-import { AppBar, Toolbar, IconButton, Slide } from "@material-ui/core/";
+import { AppBar, Toolbar, IconButton, Slide, Tooltip } from "@material-ui/core/";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
 import { Settings, Save, Search, PlaylistPlay, Brush, OfflineBolt } from "@material-ui/icons/";
 
@@ -21,7 +21,7 @@ function HideOnScroll(props) {
 }
 
 function SimpleAppBar(props) {
-  const [{ activeView, nowPlaying }, dispatch] = useContext(GlobalContext);
+  const [{ activeView, nowPlaying, isOnline }, dispatch] = useContext(GlobalContext);
 
   const setActiveView = React.useCallback(
     (data) => {
@@ -58,12 +58,24 @@ function SimpleAppBar(props) {
       default: 
         return (
           <>
-            <IconButton  onClick={() => setActiveView("search")} color="inherit" aria-label="Search"><Search /></IconButton>
-            <IconButton color="inherit" onClick={() => setActiveView("artists")}  aria-label="Artists"><Brush /></IconButton>
-            <IconButton color="inherit" onClick={() => setActiveView("playlists")}  aria-label="Playlists"><PlaylistPlay /></IconButton>
-            <IconButton  onClick={() => setActiveView("savePlaylist")} color="inherit" aria-label="Save"><Save /></IconButton>
-            <IconButton color="inherit" onClick={() => cacheNowPlaying()}  aria-label="Cache"><OfflineBolt /></IconButton>
-            <IconButton color="inherit" onClick={() => setIsMenuOpen(true)} aria-label="Settings"><Settings /></IconButton>
+            <Tooltip title="Search">
+              <IconButton  onClick={() => setActiveView("search")} color="inherit" aria-label="Search"><Search /></IconButton>
+            </Tooltip>
+            <Tooltip title="View artists">
+              <IconButton color="inherit" onClick={() => setActiveView("artists")}  aria-label="Artists"><Brush /></IconButton>
+            </Tooltip>
+            <Tooltip title="Load playlist">
+              <IconButton color="inherit" onClick={() => setActiveView("playlists")}  aria-label="Playlists"><PlaylistPlay /></IconButton>
+            </Tooltip>
+            <Tooltip title="Save a playlist">
+                <IconButton disabled={!isOnline} onClick={() => setActiveView("savePlaylist")} color="inherit" aria-label="Save"><Save /></IconButton>
+            </Tooltip>
+            <Tooltip title="Cache song queue">
+              <IconButton disabled={!isOnline} color="inherit" onClick={() => cacheNowPlaying()}  aria-label="Cache"><OfflineBolt /></IconButton>
+            </Tooltip>
+            <Tooltip title="Settings">
+              <IconButton color="inherit" onClick={() => setIsMenuOpen(true)} aria-label="Settings"><Settings /></IconButton>
+            </Tooltip>
           </>
         );
     }

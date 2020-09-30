@@ -77,7 +77,7 @@ const Player = () => {
     }
   };
 
-  const onSeek= (value) => {
+  const onSeek = (value) => {
     setCurrentTime(value);
     playerRef.current.currentTime = value;
   }

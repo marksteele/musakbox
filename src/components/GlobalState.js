@@ -1,10 +1,10 @@
 import React, { useReducer } from "react";
-
 export const GlobalContext = React.createContext();
 
 const initialState = {
   savePlaylist: '',
   isMenuOpen: false,
+  isOnline: true,
   activeView: '',
   refreshing: true,
   songList: [], // The "everything" list. [{key: 'songs/s3/path.mp3', title: 'choo choo', artist: 'foo man chew'}]
@@ -22,6 +22,11 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "setIsOnline":
+      return {
+        ...state,
+        isOnline: action.isOnline
+      }
     case "setIsMenuOpen":
       return {
         ...state,
@@ -38,10 +43,7 @@ const reducer = (state, action) => {
         refreshing: action.refreshing
       }
     case "addToNowPlaying":
-      return {
-        ...state,
-        nowPlaying: [action.song, ...state.nowPlaying ]
-      };
+      return { ...state, nowPlaying: [action.song, ...state.nowPlaying ]};
     case "setActiveView":
       return {
         ...state,
@@ -54,10 +56,10 @@ const reducer = (state, action) => {
         artists: [...new Set(action.songs.map(x => x.artist))]
       };
     case "setNowPlaying": 
-      return {
-        ...state,
-        nowPlaying: action.nowPlaying
-      };
+        return {
+          ...state,
+          nowPlaying: action.nowPlaying
+        };  
     case "setPlaylists": 
       return {
         ...state,
@@ -93,6 +95,7 @@ const reducer = (state, action) => {
 
 export const GlobalState = props => {
   const globalState = useReducer(reducer, initialState);
+
   return (
     <GlobalContext.Provider value={globalState}>
       {props.children}
