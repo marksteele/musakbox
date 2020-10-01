@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "./GlobalState";
 import { Remove, PlayForWork } from "@material-ui/icons/";
 import { IconButton } from "@material-ui/core/";
@@ -10,7 +10,8 @@ const NowPlaying = () => {
 
   const [{ nowPlaying, activeView }, dispatch] = useContext(GlobalContext);
   const [cachedFiles, setSetCachedfiles] = React.useState([]);
-
+  const [timerInterval, setTimerInterval] = React.useState(null);
+  
   const setCurrentSong = data => {
     dispatch({ type: "setCurrentSong", song: data });
   };
@@ -24,12 +25,34 @@ const NowPlaying = () => {
     dispatch({ type: "setNowPlaying", nowPlaying: nowPlaying.filter(x => x.key !== key) });
   }
 
-  React.useEffect(() => {
+  const getCachedFiles = () => {
+    return cachedFiles;
+  }
+
+  useEffect(() => {
     const fetchCachedFiles = async () => {
       const files = await isCached(nowPlaying);
       setSetCachedfiles(files);
     };
-    fetchCachedFiles();
+    if (nowPlaying.length === 0) {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        setTimerInterval(null);
+        setSetCachedfiles([]);
+      }
+    } else {
+      const cached = getCachedFiles();
+      if (nowPlaying.length !== cached.length || nowPlaying.filter(({ key: id1 }) => !cached.some(({ key: id2 }) => id2 === id1)).length > 0) {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          setTimerInterval(null);
+          fetchCachedFiles();
+        }  
+      }
+      setTimerInterval(setInterval(() => {
+        fetchCachedFiles();
+      },2000));
+    }
   }, [nowPlaying]);  
 
   const renderResult = cachedFiles.map(song => {

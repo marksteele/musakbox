@@ -45,6 +45,7 @@ MusakBox uses several mechanisms to support offline play:
 # TODO
 
 * Better cache management (playlists/songlist persistent keys in cache)
+* Redo state (see notes below)
 * Media uploads (easy-ish, have done this before)
 * Good sync solution (easy enough to automate with a cron-job...)
 * Native apps ..work in progress, have prototypes with Electron ap (medium)
@@ -264,8 +265,12 @@ Build MacOS Electron app:
 yarn build
 ```
 
+State re-do:
 
-songList -> everything list
-nowPlaying -> list of indexes from songlist?
-playlists: list of playlists
-playlist contents: list of indexes from songlist (looked up through state updates)
+songList -> everything list (loaded by reading file list from S3. Also holds cache state)
+nowPlaying -> list of indexes from songlist
+playlists: list of playlists (loaded by listing files in playlist folder)
+playlist contents: Playlist contains list of keys in s3. When read (from s3 or local storage) translated to indexes from songList.
+currentSong: index from songList of currently playing song
+
+Advantage of doing this way: can centralize cache status to only live in songList and can push updates through reducer. Will be able to display cache status in playlists.

@@ -28,6 +28,9 @@ if (typeof importScripts === 'function') {
     /* injection point for manifest files.  */
     workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
 
+    // TODO
+    // Remap requests for song lists: ?prefix=private%2Fus-east-1%3A4104d4a7-448a-4016-9a18-2ea480a258b2%2Fsongs%2FL
+    // remap requests for playlist list: https://emusak-files174704-dev.s3.amazonaws.com/?max-keys=9999&prefix=private%2Fus-east-1%3A4104d4a7-448a-4016-9a18-2ea480a258b2%2Fplaylists%2F'
     workbox.routing.registerRoute(
       /.*\/(songs\/.+?\.(mp3|flac|wav|ogg))\?.*/i,
       handler
