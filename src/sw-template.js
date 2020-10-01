@@ -3,7 +3,7 @@ if (typeof importScripts === 'function') {
   /* global workbox */
   if (workbox) {
 
-    const handler = async ({url, event}) => {
+    const handleSong = async ({url, event}) => {
       const cache = await caches.open('musakbox');
       const matches = url.href.match(/.*\/(songs\/.+?\.(mp3|flac|wav|ogg))\?.*/i);
       const cacheReq = new Request(matches[1]);
@@ -23,17 +23,63 @@ if (typeof importScripts === 'function') {
       return response;
     };
 
+    const handleSongList = async ({url, event}) => {
+      const cache = await caches.open('musakbox');
+      const matches = url.href.match(/\?prefix=private.+?%2Fsongs%2F([a-zA-Z0-9])$/);
+      const cacheKey = `songlist-cache-${matches[1]}`
+      const cacheReq = new Request(cacheKey);
+      console.log("Checking cache for " + cacheKey);
+      const cacheResponse = await cache.match(cacheReq);
+      if (cacheResponse) {
+        console.log("SW: AUTOCACHE: CACHE HIT: " + cacheKey);
+        return cacheResponse;
+      }
+      console.log("SW: AUTOCACHE: CACHE MISS: " + cacheKey);
+      const response = await fetch(url.href);
+      if (response.ok) {
+        await cache.put(cacheReq, response.clone());
+      } else {
+        console.log("SW: AUTOCACHE: ERROR FETCHING: " + cacheKey);
+      }
+      return response;
+    };
+
+    const handlePlaylist = async ({url, event}) => {
+      const cache = await caches.open('musakbox');
+      const cacheKey = `playlist`
+      const cacheReq = new Request(cacheKey);
+      console.log("Checking cache for " + cacheKey);
+      const cacheResponse = await cache.match(cacheReq);
+      if (cacheResponse) {
+        console.log("SW: AUTOCACHE: CACHE HIT: " + cacheKey);
+        return cacheResponse;
+      }
+      console.log("SW: AUTOCACHE: CACHE MISS: " + cacheKey);
+      const response = await fetch(url.href);
+      if (response.ok) {
+        await cache.put(cacheReq, response.clone());
+      } else {
+        console.log("SW: AUTOCACHE: ERROR FETCHING: " + cacheKey);
+      }
+      return response;
+    };
+
     console.log('Workbox is loaded');
     workbox.core.skipWaiting();
     /* injection point for manifest files.  */
     workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
 
-    // TODO
-    // Remap requests for song lists: ?prefix=private%2Fus-east-1%3A4104d4a7-448a-4016-9a18-2ea480a258b2%2Fsongs%2FL
-    // remap requests for playlist list: https://emusak-files174704-dev.s3.amazonaws.com/?max-keys=9999&prefix=private%2Fus-east-1%3A4104d4a7-448a-4016-9a18-2ea480a258b2%2Fplaylists%2F'
     workbox.routing.registerRoute(
       /.*\/(songs\/.+?\.(mp3|flac|wav|ogg))\?.*/i,
-      handler
+      handleSong
+    );
+    workbox.routing.registerRoute(
+      /\?prefix=private.+?%2Fsongs%2F[a-zA-Z0-9]$/,
+      handleSongList
+    );
+    workbox.routing.registerRoute(
+      /\?max-keys=9999&prefix=private%2F.+?%2Fplaylists%2F$/,
+      handlePlaylist
     );
     workbox.routing.registerRoute(
       new RegExp('.*'),
