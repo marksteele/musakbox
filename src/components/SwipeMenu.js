@@ -44,6 +44,10 @@ const SwipeMenu = () => {
   const refreshMetadata = () => {
     console.log("Flushing localstorage cache");
     lscache.flush();
+    if (navigator.serviceWorker !== undefined && navigator.serviceWorker.controller !== null) {
+      console.log("Sending flush event to SW");
+      navigator.serviceWorker.controller.postMessage({ command: 'flushMeta' });
+    }
     dispatchState();
   }
 

@@ -23,47 +23,6 @@ if (typeof importScripts === 'function') {
       return response;
     };
 
-    const handleSongList = async ({url, event}) => {
-      const cache = await caches.open('musakbox');
-      const matches = url.href.match(/\?prefix=private.+?%2Fsongs%2F([a-zA-Z0-9])$/);
-      const cacheKey = `songlist-cache-${matches[1]}`
-      const cacheReq = new Request(cacheKey);
-      console.log("Checking cache for " + cacheKey);
-      const cacheResponse = await cache.match(cacheReq);
-      if (cacheResponse) {
-        console.log("SW: AUTOCACHE: CACHE HIT: " + cacheKey);
-        return cacheResponse;
-      }
-      console.log("SW: AUTOCACHE: CACHE MISS: " + cacheKey);
-      const response = await fetch(url.href);
-      if (response.ok) {
-        await cache.put(cacheReq, response.clone());
-      } else {
-        console.log("SW: AUTOCACHE: ERROR FETCHING: " + cacheKey);
-      }
-      return response;
-    };
-
-    const handlePlaylist = async ({url, event}) => {
-      const cache = await caches.open('musakbox');
-      const cacheKey = `playlist`
-      const cacheReq = new Request(cacheKey);
-      console.log("Checking cache for " + cacheKey);
-      const cacheResponse = await cache.match(cacheReq);
-      if (cacheResponse) {
-        console.log("SW: AUTOCACHE: CACHE HIT: " + cacheKey);
-        return cacheResponse;
-      }
-      console.log("SW: AUTOCACHE: CACHE MISS: " + cacheKey);
-      const response = await fetch(url.href);
-      if (response.ok) {
-        await cache.put(cacheReq, response.clone());
-      } else {
-        console.log("SW: AUTOCACHE: ERROR FETCHING: " + cacheKey);
-      }
-      return response;
-    };
-
     console.log('Workbox is loaded');
     workbox.core.skipWaiting();
     /* injection point for manifest files.  */
@@ -73,14 +32,8 @@ if (typeof importScripts === 'function') {
       /.*\/(songs\/.+?\.(mp3|flac|wav|ogg))\?.*/i,
       handleSong
     );
-    workbox.routing.registerRoute(
-      /\?prefix=private.+?%2Fsongs%2F[a-zA-Z0-9]$/,
-      handleSongList
-    );
-    workbox.routing.registerRoute(
-      /\?max-keys=9999&prefix=private%2F.+?%2Fplaylists%2F$/,
-      handlePlaylist
-    );
+    
+    
     workbox.routing.registerRoute(
       new RegExp('.*'),
       new workbox.strategies.CacheFirst({cacheName: 'musakbox'})
@@ -89,7 +42,6 @@ if (typeof importScripts === 'function') {
     console.log('Workbox could not be loaded. No Offline support');
   }
 }
-
 // ServiceWorker can receive messages to cache things...
 self.addEventListener('message', function(event) {
   var p = caches.open('musakbox').then(function(cache) {
@@ -98,6 +50,10 @@ self.addEventListener('message', function(event) {
         return cache.delete(new Request(event.data.url));
       case 'flush':
         return cache.keys().then(reqs => Promise.all(reqs.map(req => cache.delete(req))));
+      case 'flushMeta':
+        return cache.keys().then(reqs => Promise.all(reqs.filter(req => {
+          return /\?prefix=private%2F/.test(req.url)
+        }).map(req => cache.delete(req))));
       case 'add':
         const matches = event.data.url.match(/.*\/(songs\/.+?\.(mp3|flac|wav|ogg))\?.*/i);
         const cacheReq = new Request(matches[1]);

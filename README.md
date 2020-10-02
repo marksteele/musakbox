@@ -44,7 +44,6 @@ MusakBox uses several mechanisms to support offline play:
 
 # TODO
 
-* Better cache management (playlists/songlist persistent keys in cache)
 * Redo state (see notes below)
 * Media uploads (easy-ish, have done this before)
 * Good sync solution (easy enough to automate with a cron-job...)
