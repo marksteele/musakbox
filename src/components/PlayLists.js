@@ -6,7 +6,7 @@ import { Delete } from "@material-ui/icons";
 
 const PlayLists = () => {
 
-  const [{ playlists, activeView }, dispatch] = useContext(GlobalContext);
+  const [{ playlists, activeView, songList }, dispatch] = useContext(GlobalContext);
 
   const setNowPlaying = data => {
     dispatch({ type: "setNowPlaying", nowPlaying: data.length ? data : [] });
@@ -15,10 +15,7 @@ const PlayLists = () => {
   };
 
   const handleClick = playlist => {
-    loadPlaylist(playlist)
-      .then(songs => {
-        setNowPlaying(songs);
-      });
+    loadPlaylist(playlist).then(songs => setNowPlaying(songs.map(song => songList.findIndex(x => x.key === song.key))));
   };
 
   const setPlaylists = useCallback(

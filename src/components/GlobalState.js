@@ -12,7 +12,7 @@ const initialState = {
   playlists: [], // Lists of playlists
   artists: [], // Lists of artists
   searchResults: [],
-  currentSong: {},
+  currentSong: null,
   isPlaying: false,
   isMuted: false,
   currentTime: 0,
@@ -22,6 +22,9 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "setCacheStatus":
+      state.songList[action.cacheStatus.idx].cached = action.cacheStatus.status;
+      return state;
     case "setIsOnline":
       return {
         ...state,

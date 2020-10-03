@@ -34,7 +34,7 @@ const SwipeMenu = () => {
   const dispatchState = () => {
     dispatch({ type: "setActiveView", activeView: "nowPlaying" });
     dispatch({ type: "setNowPlaying", nowPlaying: [] });
-    dispatch({ type: "setCurrentSong", song: {} });
+    dispatch({ type: "setCurrentSong", song: null });
     dispatch({ type: "setPlaylists", playlists: [] });
     dispatch({ type: "setSongList", songs: []});
     dispatch({ type: "setRefreshing", refreshing: true});

@@ -2,45 +2,6 @@ import { Storage } from 'aws-amplify';
 import lscache from 'lscache';
 
 
-const encodings = {
-  '+': "%2B",
-  '!': "%21",
-  '"': "%22",
-  '#': "%23",
-  '$': "%24",
-  '&': "%26",
-  '\'': "%27",
-  '(': "%28",
-  ')': "%29",
-  '*': "%2A",
-  ',': "%2C",
-  ':': "%3A",
-  ';': "%3B",
-  '=': "%3D",
-  '?': "%3F",
-  '@': "%40",
-};
-
-const encodeS3URI = (filename) => {
-  return encodeURI(filename).replace(/(\+|!|"|#|\$|&|'|\(|\)|\*|\+|,|:|;|=|\?|@)/img, (match) => encodings[match]);
-}
-
-export function isCached(songs) {
-  return caches
-    .open('musakbox')
-    .then(cache => {
-      return Promise.all(songs.map(song => {
-        return cache
-          .match(encodeS3URI(song.key))
-          .then(res => {
-            return {...song, cached: res ? true : false};
-          })
-      }))
-      .then(res => {
-        return res;
-      });
-    });
-}
 
 // Assumption: An artist will not have more than 1000 songs. Limitation of amplify ¯\_(ツ)_/¯
 // We could work around this by using some partitioning (eg: aplphabet prefixing)
@@ -71,7 +32,7 @@ export function listSongs() {
 
 export function parseInfo(key) {
   const match = key.match(/^songs\/([^/]+)\/(.+)\..+$/);
-  return match ? { key: key, artist: match[1], title: match[2] } : { artist: "unknown", title: key };
+  return match ? { key: key, artist: match[1], title: match[2], cached: false } : { artist: "unknown", title: key };
 }
 
 export function fetchSongUrl(key) {

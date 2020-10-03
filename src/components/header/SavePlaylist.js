@@ -6,7 +6,7 @@ import {savePlaylist as save} from '../../playlist';
 
 const SavePlaylist = ({ history, location }) => {
 
-  const [{ nowPlaying, activeView, savePlaylist }, dispatch] = useContext(GlobalContext);
+  const [{ nowPlaying, activeView, savePlaylist, songList }, dispatch] = useContext(GlobalContext);
   
   const setActiveView = useCallback(
     (data) => {
@@ -44,7 +44,7 @@ const SavePlaylist = ({ history, location }) => {
       return;
     }
     console.log("Saving playlist...");
-    save(savePlaylist, nowPlaying).then(() => {
+    save(savePlaylist, nowPlaying.map(x => songList[x])).then(() => {
       setActiveView("nowPlaying");
       setRefreshing(true);
     });

@@ -5,7 +5,7 @@ if (typeof importScripts === 'function') {
 
     const handleSong = async ({url, event}) => {
       const cache = await caches.open('musakbox');
-      const matches = url.href.match(/.*\/(songs\/.+?\.(mp3|flac|wav|ogg))\?.*/i);
+      const matches = url.href.match(/.*\/(songs\/.+?\.(mp3|flac|wav|ogg)).*/i);
       const cacheReq = new Request(matches[1]);
       console.log("Checking cache for " + matches[1]);
       const cacheResponse = await cache.match(cacheReq);
@@ -29,7 +29,7 @@ if (typeof importScripts === 'function') {
     workbox.precaching.precacheAndRoute(self.__WB_MANIFEST);
 
     workbox.routing.registerRoute(
-      /.*\/(songs\/.+?\.(mp3|flac|wav|ogg))\?.*/i,
+      /.*\/(songs\/.+?\.(mp3|flac|wav|ogg)).*/i,
       handleSong
     );
     

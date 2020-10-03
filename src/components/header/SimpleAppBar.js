@@ -21,7 +21,7 @@ function HideOnScroll(props) {
 }
 
 function SimpleAppBar(props) {
-  const [{ activeView, nowPlaying, isOnline }, dispatch] = useContext(GlobalContext);
+  const [{ activeView, nowPlaying, isOnline, songList }, dispatch] = useContext(GlobalContext);
 
   const setActiveView = React.useCallback(
     (data) => {
@@ -40,7 +40,7 @@ function SimpleAppBar(props) {
     if (navigator.serviceWorker !== undefined && navigator.serviceWorker.controller !== null) {
       console.log("SW enabled, sending pre-cache items to SW");
       Promise
-        .all(nowPlaying.map(s => fetchSongUrl(s.key)))
+        .all(nowPlaying.map(s => fetchSongUrl(songList[s].key)))
         .then(urls => urls.forEach(url => navigator.serviceWorker.controller.postMessage({ command: 'add', url })))
     }
   }

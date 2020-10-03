@@ -10,7 +10,7 @@ import {
 
 const SearchResult = () => {
 
-  const [{ searchResults, activeView }, dispatch] = useContext(GlobalContext);
+  const [{ searchResults, activeView, songList }, dispatch] = useContext(GlobalContext);
 
   const setCurrentSong = data => {
     dispatch({ type: "addToNowPlaying", song: data});
@@ -23,8 +23,8 @@ const SearchResult = () => {
   const renderResult = searchResults.map(song => {
     return (
       <>
-        <ListItem key={song.key} alignItems="flex-start" button onClick={() => handleClick(song)}>
-          <ListItemText primary={song.title} secondary={<><Typography component="span" variant="body2" color="textPrimary">{song.artist}</Typography></>}/>
+        <ListItem key={songList[song].key} alignItems="flex-start" button onClick={() => handleClick(song)}>
+          <ListItemText primary={songList[song].title} secondary={<><Typography component="span" variant="body2" color="textPrimary">{songList[song].artist}</Typography></>}/>
         </ListItem>
         <Divider />
       </>

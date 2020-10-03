@@ -7,7 +7,7 @@ import './Player.css'
 const Player = () => {
 
   const [{ nowPlaying }, dispatch] = useContext(GlobalContext);
-  const [{currentSong}] = useContext(GlobalContext);
+  const [{currentSong, songList}] = useContext(GlobalContext);
   const [isMuted, setIsMuted] = useState(0);
   const [isLooping, setIsLooping] = useState(0);
   const [isShuffle, setIsShuffle] = useState(0);
@@ -35,9 +35,10 @@ const Player = () => {
   }, [isPlaying]);
 
   useEffect(() => {
-    if (currentSong.key !== undefined) {
-      fetchSongUrl(currentSong.key)
+    if (currentSong !== null) {
+      fetchSongUrl(songList[currentSong].key)
       .then(url => {
+        console.log("Setting song url to " + url);
         setCurrentSongUrl(url);
       });
       setIsPlaying(true);
@@ -59,7 +60,7 @@ const Player = () => {
 
   const playPrev = () => {
     if (nowPlaying.length > 0) {
-      const idx = nowPlaying.findIndex(x => x.key === currentSong.key) || 0;
+      const idx = nowPlaying.findIndex(x => x === currentSong) || 0;
       dispatch({type: "setCurrentSong", song: nowPlaying[idx>0 ? idx-1 : nowPlaying.length-1]});  
     }
   };
@@ -67,7 +68,7 @@ const Player = () => {
   const playNext = () => {
     if (nowPlaying.length > 0) {
       if (!isShuffle) {
-        const idx = nowPlaying.findIndex(x => x.key === currentSong.key) || 0;
+        const idx = nowPlaying.findIndex(x => x === currentSong) || 0;
         if (idx+1 !== nowPlaying.length) {
           dispatch({type: "setCurrentSong", song: nowPlaying[((idx+1) < nowPlaying.length+1) ? idx+1 : 0]});
         }
@@ -95,8 +96,8 @@ const Player = () => {
     if ("mediaSession" in navigator) {
       console.log("navigator setupped");
       navigator.mediaSession.metadata = new window.MediaMetadata({
-        title: currentSong.title,
-        artist: currentSong.artist
+        title: songList[currentSong].title,
+        artist: songList[currentSong].artist
       });
       navigator.mediaSession.setActionHandler("play", () => {
         console.log("IN PLAY");
@@ -123,7 +124,7 @@ const Player = () => {
           <div className="time">{convertSecondsToMinsSecs(currentTime)}</div>
           <input className='slider' type="range" min="0" step="1" max={duration} value={currentTime} onChange={(e) => onSeek(e.target.value)}/>
           <div className="time">{convertSecondsToMinsSecs(duration)}</div>
-          <div className="song-title">{currentSong.title}</div>
+          <div className="song-title">{currentSong ? songList[currentSong].title : null}</div>
         </div>
         <div className="icons-container">
           <i className={isLooping ? "material-icons repeat glow" : "material-icons repeat"} onClick={() => setIsLooping(!isLooping)}>repeat_one</i>

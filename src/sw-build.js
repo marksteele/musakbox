@@ -8,7 +8,7 @@ const buildSW = () => {
       swDest: 'build/service-worker.js', // this will be created in the build step
       globDirectory: 'build',
       globPatterns: ['**/*'], 
-      maximumFileSizeToCacheInBytes: 10000000
+      maximumFileSizeToCacheInBytes: 4000000
     })
     .then(({ count, size, warnings }) => {
       // Optionally, log any warnings and details.

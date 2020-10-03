@@ -37,7 +37,7 @@ const SearchBox = ({ history, location }) => {
       ]
     };
     const fuse = new Fuse(songList, options);
-    const res = fuse.search(searchQuery).map(i => i.item);
+    const res = fuse.search(searchQuery).map(i => i.item).map(i => songList.findIndex(song => song.key === i.key));
     setSearchResults(res);
   };
 

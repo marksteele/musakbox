@@ -21,7 +21,7 @@ const ArtistList = () => {
   );
 
   const handleClick = artist => {
-    setSearchResults(songList.filter(s => s.artist === artist));
+    setSearchResults(songList.filter(s => s.artist === artist).map(x => songList.findIndex(y => x.key === y.key)));
     setActiveView("search");
   };
 
