@@ -32,13 +32,13 @@ const PlayLists = () => {
 
   const renderResult = playlists.map(playlist => {
     return (
-      <>
-        <ListItem key={playlist} alignItems="flex-start" button>
+      <div key={playlist}>
+        <ListItem alignItems="flex-start" button>
           <ListItemText onClick={() => handleClick(playlist)} primary={playlist} />
           <IconButton color="inherit" aria-label="Remove" onClick={() => remove(playlist)}><Delete /></IconButton>
         </ListItem>
         <Divider />
-      </>
+      </div>
     );
   });
 

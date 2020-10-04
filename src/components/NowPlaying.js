@@ -1,16 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, createRef } from "react";
 import { GlobalContext } from "./GlobalState";
 import { Remove, PlayForWork } from "@material-ui/icons/";
 import { IconButton } from "@material-ui/core/";
-import { List, ListItem, Typography, Divider, ListItemText, Tooltip} from "@material-ui/core";
+import { ListItem, Typography, Divider, ListItemText, Tooltip} from "@material-ui/core";
 import { green, red } from '@material-ui/core/colors';
+
+
 
 const NowPlaying = () => {
 
-  const [{ nowPlaying, activeView, songList, refreshing }, dispatch] = useContext(GlobalContext);
+  const [{ nowPlaying, activeView, songList, currentSong }, dispatch] = useContext(GlobalContext);
   const [timerInterval, setTimerInterval] = useState(null);
   const [refresh, setRefresh] = useState(true);
   const [renderResult, setRenderResult] = useState(null);
+  const [refs, setRefs] = useState([]);
 
   const setCurrentSong = data => {
     dispatch({ type: "setCurrentSong", song: data });
@@ -49,12 +52,12 @@ const NowPlaying = () => {
   }
 
   useEffect(() => {
+    setRefresh(true);
     if (timerInterval) {
       clearInterval(timerInterval);
       setTimerInterval(null);
     }
     if (nowPlaying.length) {
-      setRefresh(true);
       setTimerInterval(setInterval(() => {
         return caches
           .open('musakbox')
@@ -81,6 +84,7 @@ const NowPlaying = () => {
             });
           });
       },2000));
+      setRefs(nowPlaying.reduce((acc, idx) => { acc[idx] = createRef(); return acc;}, {}));
     }
   }, [nowPlaying]);  
 
@@ -88,7 +92,7 @@ const NowPlaying = () => {
     if (refresh) {
       setRenderResult(nowPlaying.map(idx => {
         return (
-          <List>
+          <div key={idx} ref={refs[idx]}>
             <ListItem key={idx} alignItems="flex-start">
               <ListItemText onClick={() => handleClick(idx)} primary={songList[idx].title} secondary={<><Typography component="span" variant="body2" color="textPrimary">{songList[idx].artist}</Typography></>}/>
               <Tooltip title="Remove from queue">
@@ -99,7 +103,7 @@ const NowPlaying = () => {
               </Tooltip>
             </ListItem>
             <Divider />
-          </List>
+          </div>
         );
       }));
       setRefresh(false);
@@ -107,8 +111,17 @@ const NowPlaying = () => {
   }, [refresh]);
 
   useEffect(() => {
-    setRefresh(true);
-  }, [refreshing]);
+    if (currentSong) {
+      refs[currentSong].current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+      // Programatically change the style and add glow. Works, but then would need to keep track of previous song, besides it scrolls to current song.
+      // refs[currentSong].current.style.outline = 'none';
+      // refs[currentSong].current.style.borderColor = '#9ecaed';
+      // refs[currentSong].current.style.boxShadow = '0 0 10px #9ecaed';
+    }
+  }, [currentSong]);
 
   return activeView === "nowPlaying" ? renderResult : null;
 
