@@ -15,7 +15,11 @@ const PlayLists = () => {
   };
 
   const handleClick = playlist => {
-    loadPlaylist(playlist).then(songs => setNowPlaying(songs.map(song => songList.findIndex(x => x.key === song.key))));
+    loadPlaylist(playlist).then(songs => setNowPlaying(
+        songs
+          .map(song => songList.findIndex(x => x.key === song.key))
+          .filter(idx => idx !== -1)
+      ));
   };
 
   const setPlaylists = useCallback(
