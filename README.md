@@ -4,6 +4,8 @@ MusakBox is an online music streaming app that is completely serverless, and lev
 
 It allows you to play music and manage playlists.
 
+I'd you'd rather use an app than a browser, look here: https://github.com/marksteele/MusakBoxNative
+
 # Motivation
 
 I really liked Google play music, but now that it's on the way out I wanted to find a solution that would allow me to listen to my music collection anywhere.
