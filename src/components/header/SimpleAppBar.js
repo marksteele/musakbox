@@ -4,10 +4,11 @@ import SearchBox from "./SearchBox";
 import SavePlaylist from "./SavePlaylist";
 import PlayListMenu from "./PlayListMenu";
 import ArtistMenu from "./ArtistMenu";
+import UploadMenu from "./UploadMenu";
 import { fetchSongUrl }  from '../../songs.js';
 import { AppBar, Toolbar, IconButton, Slide, Tooltip } from "@material-ui/core/";
 import useScrollTrigger from "@material-ui/core/useScrollTrigger";
-import { Settings, Save, Search, PlaylistPlay, Brush, OfflineBolt } from "@material-ui/icons/";
+import { Settings, Save, Search, PlaylistPlay, Brush, OfflineBolt, CloudUpload } from "@material-ui/icons/";
 
 function HideOnScroll(props) {
   const { children } = props;
@@ -55,6 +56,8 @@ function SimpleAppBar(props) {
         return <PlayListMenu />;
       case "artists":
         return <ArtistMenu />
+      case "upload":
+        return <UploadMenu />
       default: 
         return (
           <>
@@ -75,6 +78,9 @@ function SimpleAppBar(props) {
             </Tooltip>
             <Tooltip title="Settings">
               <IconButton color="inherit" onClick={() => setIsMenuOpen(true)} aria-label="Settings"><Settings /></IconButton>
+            </Tooltip>
+            <Tooltip title="Upload">
+              <IconButton color="inherit" onClick={() => setActiveView("upload")} aria-label="Upload"><CloudUpload /></IconButton>
             </Tooltip>
           </>
         );

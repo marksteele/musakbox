@@ -1,8 +1,6 @@
 import { Storage } from 'aws-amplify';
 import lscache from 'lscache';
 
-
-
 // Assumption: An artist will not have more than 1000 songs. Limitation of amplify ¯\_(ツ)_/¯
 // We could work around this by using some partitioning (eg: aplphabet prefixing)
 // Not a problem with my collection....
@@ -37,4 +35,8 @@ export function parseInfo(key) {
 
 export function fetchSongUrl(key) {
   return Storage.get(key, { level: 'private', expires: 86400 }).then(result => result);
+}
+
+export function saveSong(artist, album, track, song) {
+  return Storage.put(`songs/${artist}/${album}/${track}`, song, { level: 'private' });
 }

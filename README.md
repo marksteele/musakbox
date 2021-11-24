@@ -42,19 +42,13 @@ MusakBox uses several mechanisms to support offline play:
 * Regular stuff: repeat, shuffle, seek, mute
 * Lock screen controls
 * Can be installed as Chrome app (Chrome Desktop & Android)
+* Upload new songs
 * Cache management
 
 # TODO
 
-* Redo state (see notes below)
-* Media uploads (easy-ish, have done this before)
-* Good sync solution (easy enough to automate with a cron-job...)
-* Native apps ..work in progress, have prototypes with Electron ap (medium)
-* Handle offline mode... when song missing skip to next cached song
-* Media keys (should be do-able) -- Ugh. what a PITA. Can't get it to work.
 * When pre-caching a bunch of songs, the SW appears to get stuck sometimes. Should re-factor to open a bi-directional channel with the front-end and limit concurrent requests, with timeouts and retries.
 * Better detection/handling of failed requests. Ex: detect logged in state when requests fail with 400 errors and refresh token (if token refreshable).
-
 
 # S3 file organization
 
@@ -260,8 +254,3 @@ Notes:
 Sending stuff to serviceworkers (and back!): https://googlechrome.github.io/samples/service-worker/post-message/
 https://developers.google.com/web/tools/workbox/guides/advanced-recipes
 
-Build MacOS Electron app: 
-
-```
-yarn build
-```

@@ -111,15 +111,11 @@ const NowPlaying = () => {
   }, [refresh]);
 
   useEffect(() => {
-    if (currentSong) {
+    if (currentSong && activeView === "nowPlaying") {
       refs[currentSong].current.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
       });
-      // Programatically change the style and add glow. Works, but then would need to keep track of previous song, besides it scrolls to current song.
-      // refs[currentSong].current.style.outline = 'none';
-      // refs[currentSong].current.style.borderColor = '#9ecaed';
-      // refs[currentSong].current.style.boxShadow = '0 0 10px #9ecaed';
     }
   }, [currentSong]);
 

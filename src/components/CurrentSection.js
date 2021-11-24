@@ -9,6 +9,7 @@ import NowPlaying from "../components/NowPlaying";
 import Playlists from "../components/PlayLists";
 import ArtistList from "../components/ArtistList";
 import PlayListsSave from "../components/PlayListsSave";
+import UploadFile from "../components/UploadFile";
 
 const CurrentSection = () => {
   const [{ refreshing }, dispatch] = useContext(GlobalContext);
@@ -70,6 +71,7 @@ const CurrentSection = () => {
           <Playlists />
           <ArtistList />
           <PlayListsSave />
+          <UploadFile />
         </div>
         <Player />
         </div>
