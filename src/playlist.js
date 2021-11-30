@@ -1,4 +1,4 @@
-import { Storage } from 'aws-amplify';
+import { Storage, Auth } from 'aws-amplify';
 import lscache from 'lscache';
 import { parseInfo }  from './songs.js';
 
@@ -8,11 +8,13 @@ import { parseInfo }  from './songs.js';
 export function fetchPlaylists() {
   let results = lscache.get('playlists');
   if (results === null) {
-    return Storage.list(`playlists/`, { level: 'private', maxKeys: 9999 })
-    .then(response => {
-      results = response.map(item => item.key.slice(10,item.key.length));
-      lscache.set('playlists', results, 86400);
-      return results;
+    return Auth.currentAuthenticatedUser().then(user => {
+      return Storage.list(`playlists/`, { level: 'private', maxKeys: 9999, identityId: user.username })
+      .then(response => {
+        results = response.map(item => item.key.slice(10,item.key.length));
+        lscache.set('playlists', results, 86400);
+        return results;
+      });  
     });
   } else {
     return Promise.resolve(results);
@@ -36,37 +38,43 @@ export function loadPlaylist(key) {
 }
 
 export function loadFile(key) {
-  return Storage.get(key, { level: 'private', expires: 60 })
-    .then(response => fetch(response))
-    .then(fetchResponse => {
-      if (fetchResponse.ok) {
-        return fetchResponse.text()
-      }
-      return '';
-    });
+  return Auth.currentAuthenticatedUser().then(user => {
+    return Storage.get(key, { level: 'private', expires: 60, identityId: user.username })
+      .then(response => fetch(response))
+      .then(fetchResponse => {
+        if (fetchResponse.ok) {
+          return fetchResponse.text()
+        }
+        return '';
+      });
+  });
 }
 
 export function savePlaylist(playlist, songs) {
   let data = songs.map(e => e.key).join("\n");
-  return Storage.put(`playlists/${playlist}`, data, { level: 'private' })
-  .then(() => {
-    lscache.set(`playlists/${playlist}`, songs, 86400);
-    const currentLists = lscache.get('playlists');
-    if (currentLists.indexOf(playlist) === -1) {
-      lscache.set('playlists', [ ...currentLists, playlist ]);
-    }
-    return Promise.resolve();
+  return Auth.currentUserInfo().then(user => {
+    return Storage.put(`playlists/${playlist}`, data, { level: 'private', identityId: user.username })
+    .then(() => {
+      lscache.set(`playlists/${playlist}`, songs, 86400);
+      const currentLists = lscache.get('playlists');
+      if (currentLists.indexOf(playlist) === -1) {
+        lscache.set('playlists', [ ...currentLists, playlist ]);
+      }
+      return Promise.resolve();
+    });
   });
 }
 
 
 export function removePlaylist(playlist) {
-  Storage.remove(`playlists/${playlist}`, { level: 'private'})
-  .then(() => {
-    lscache.remove(playlist);
-    const results = lscache.get(`playlists`);
-    if (results.length) {
-      lscache.set('playlists', results.filter(x => x !== playlist), 86400);
-    }
-  })
+  return Auth.currentAuthenticatedUser().then(user => {
+    Storage.remove(`playlists/${playlist}`, { level: 'private', identityId: user.username})
+    .then(() => {
+      lscache.remove(playlist);
+      const results = lscache.get(`playlists`);
+      if (results.length) {
+        lscache.set('playlists', results.filter(x => x !== playlist), 86400);
+      }
+    });
+  });
 }

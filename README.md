@@ -49,12 +49,16 @@ MusakBox uses several mechanisms to support offline play:
 
 * When pre-caching a bunch of songs, the SW appears to get stuck sometimes. Should re-factor to open a bi-directional channel with the front-end and limit concurrent requests, with timeouts and retries.
 * Better detection/handling of failed requests. Ex: detect logged in state when requests fail with 400 errors and refresh token (if token refreshable).
+* Package up the lambda into the amplify framework along with the IAM role so that it doesn't need to be done by hand.
+* Document the changes to the Cognito setup, and add them to the cloudformation scripts in here. See: https://github.com/aws-amplify/amplify-js/issues/54#issuecomment-882994676
+
+
 
 # S3 file organization
 
 Files are stored in S3 per Cognito user. The folder hierarchy is:
 
-`s3://<BUCKETNAME>/private/<REGION>:<COGNITO IDENTITY ID>`
+`s3://<BUCKETNAME>/private/<COGNITO USER POOL ID>`
 
 In that folder, songs are stored in `songs/`, and playlists are stored in `playlists/`.
 
